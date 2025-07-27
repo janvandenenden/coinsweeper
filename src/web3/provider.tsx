@@ -15,7 +15,7 @@ const config = getDefaultConfig({
 
 const queryClient = new QueryClient();
 
-export default function Providers({ children }: { children: React.ReactNode }) {
+export function Web3Provider({ children }: { children: React.ReactNode }) {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
@@ -24,3 +24,5 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     </WagmiProvider>
   );
 }
+
+export default Web3Provider;

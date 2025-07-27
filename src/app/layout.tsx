@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Providers from "./providers";
+import { ThemeProvider } from "@/components/theme-provider";
+import { Web3Provider } from "@/web3/provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,11 +25,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Providers>{children}</Providers>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Web3Provider>{children}</Web3Provider>
+        </ThemeProvider>
       </body>
     </html>
   );
