@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import omitBy from "lodash/omitBy";
-
-const getBalance = async (walletAddress: string, chain: number = 1) => {
+const getPrice = async (
+  addresses: string[],
+  currency: string = "USD",
+  chain: number = 1
+) => {
   const url = new URL(
-    `https://api.1inch.dev/balance/v1.2/${chain}/balances/${walletAddress}`
+    `https://api.1inch.dev/price/v1.1/${chain}/${addresses.join(",")}`
   );
+  url.search = new URLSearchParams({ currency }).toString();
 
   const response = await fetch(url, {
     headers: {
@@ -14,19 +17,20 @@ const getBalance = async (walletAddress: string, chain: number = 1) => {
   });
   const data = await response.json();
 
-  return omitBy(data, (value) => value === "0");
+  return data;
 };
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
 
   const chain = Number(searchParams.get("chain") ?? 1);
-  const address = searchParams.get("address");
+  const address = searchParams.get("address")?.split(",");
+  const currency = searchParams.get("currency") ?? "USD";
 
   if (!address) {
     return NextResponse.json({ error: "Address is required" }, { status: 400 });
   }
 
-  const balance = await getBalance(address, chain);
-  return NextResponse.json(balance);
+  const price = await getPrice(address, currency, chain);
+  return NextResponse.json(price);
 }

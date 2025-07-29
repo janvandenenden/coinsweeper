@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const getToken = async (address: string, chain: number = 1) => {
-  const url = `https://api.1inch.dev/token/v1.4/${chain}/custom/${address}`;
+  const url = new URL(
+    `https://api.1inch.dev/token/v1.4/${chain}/custom/${address}`
+  );
+
   const response = await fetch(url, {
     headers: {
       Authorization: `Bearer ${process.env.ONE_INCH_API_KEY}`,
