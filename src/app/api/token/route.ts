@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const getToken = async (address: string, chain: number = 1) => {
+const getToken = async (addresses: string[], chain: number = 1) => {
   const url = new URL(
-    `https://api.1inch.dev/token/v1.4/${chain}/custom/${address}`
+    `https://api.1inch.dev/token/v1.4/${chain}/custom?addresses=${addresses.join(
+      "&addresses="
+    )}`
   );
 
   const response = await fetch(url, {
@@ -19,12 +21,12 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
 
   const chain = Number(searchParams.get("chain") ?? 1);
-  const address = searchParams.get("address");
+  const addresses = searchParams.get("address")?.split(",");
 
-  if (!address) {
+  if (!addresses) {
     return NextResponse.json({ error: "Address is required" }, { status: 400 });
   }
 
-  const token = await getToken(address, chain);
+  const token = await getToken(addresses, chain);
   return NextResponse.json(token);
 }
